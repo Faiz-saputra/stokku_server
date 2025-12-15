@@ -40,10 +40,11 @@ def check_stok():
                 nama = item.get("nama", "Barang tanpa nama")
 
                 if stok <= MIN_STOK:
-                    send_notification(
+                   send_fcm(
                         title="⚠️ Stok Rendah",
                         body=f"{nama} tersisa {stok}"
                     )
+
 
         return jsonify({"message": "stok berhasil dicek", "status": "ok"})
 
