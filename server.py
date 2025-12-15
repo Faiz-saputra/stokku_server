@@ -26,25 +26,46 @@ def send_fcm(title, body, topic="allUser"):
     print("[FCM SENDED]", title, body)
 
 @app.route("/check-stok")
+@app.route("/check-stok")
 def check_stok():
-    ref = db.reference("barang")
-    data = ref.get()
+    try:
+        ref = db.reference("barang")
+        data = ref.get()
 
-    if not data:
-        return jsonify({"message": "no data"})
+        # Kalau node barang belum ada
+        if data is None:
+            return jsonify({
+                "status": "ok",
+                "message": "node 'barang' belum ada di database"
+            })
 
-    for kode, item in data.items():
-        nama = item.get("nama", "Barang")
-        stok = item.get("stok", 0)
-        min_stok = item.get("min_stok", MINIMUM_STOK)
+        for kode, item in data.items():
+            # Aman walaupun field tidak lengkap
+            stok = int(item.get("stok", 0))
+            nama = item.get("nama", "Barang tanpa nama")
 
-        if stok <= min_stok:
-            send_fcm(
-                title="⚠️ Stok Rendah!",
-                body=f"{nama} tersisa {stok} item!"
-            )
+            if stok <= MIN_STOK:
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title="⚠️ Stok Rendah",
+                        body=f"{nama} tersisa {stok}"
+                    ),
+                    topic="allUser"
+                )
+                messaging.send(message)
 
-    return jsonify({"message": "stok checked"})
+        return jsonify({
+            "status": "ok",
+            "message": "stok berhasil dicek"
+        })
+
+    except Exception as e:
+        # Ini PENTING supaya error terlihat
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
 
 @app.route("/")
 def home():
@@ -53,5 +74,6 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
 
