@@ -36,8 +36,12 @@ def check_stok():
 
         for user_id, items in data.items():
             for item_id, item in items.items():
-                stok = item.get("stok", 0)
-                nama = item.get("nama", "Barang tanpa nama")
+                stok = item.get("stok")
+                nama = item.get("nama")
+                
+                # ❗ SKIP DATA RUSAK
+                if stok is None or nama is None:
+                    continue
 
                 if stok <= MIN_STOK:
                    send_fcm(
@@ -60,6 +64,7 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
