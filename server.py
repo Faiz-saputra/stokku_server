@@ -29,7 +29,7 @@ def send_fcm(title, body, topic="allUser"):
 @app.route("/check-stok")
 def check_stok():
     try:
-        ref = db.reference("barang")
+        ref = db.reference("inventory")
         data = ref.get()
 
         # Kalau node barang belum ada
@@ -74,6 +74,7 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
