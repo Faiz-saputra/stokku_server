@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 import firebase_admin 
 from firebase_admin import credentials, db, messaging
@@ -46,4 +47,6 @@ def home():
     return "Flask server berjalan!"
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
+
