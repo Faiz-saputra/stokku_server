@@ -15,7 +15,7 @@ firebase_admin.initialize_app(cred, {
     "databaseURL": os.environ["FIREBASE_DB_URL"]
 })
 
-MINIMUM_STOK = 5
+MIN_STOK = 5
 
 def send_fcm(title, body, topic="allUser"):
     message = messaging.Message(
@@ -74,6 +74,7 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
