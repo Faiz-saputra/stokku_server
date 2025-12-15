@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, jsonify
 import firebase_admin 
@@ -6,9 +7,12 @@ from firebase_admin import credentials, db, messaging
 app = Flask(__name__)
 
 # 1. Firebase Admin SDK
-cred = credentials.Certificate("serviceAccountKey.json")
+firebase_key = json.loads(os.environ["FIREBASE_SERVICE_ACCOUNT"])
+
+cred = credentials.Certificate(firebase_key)
+
 firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://inventoryproject-1-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    "databaseURL": os.environ["FIREBASE_DB_URL"]
 })
 
 MINIMUM_STOK = 5
@@ -49,4 +53,5 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
